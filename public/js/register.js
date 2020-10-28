@@ -1,3 +1,34 @@
+window.onload = function() {
+
+    const registerButton = document.getElementById('btnRegister');
+    registerButton.addEventListener("click", function (e) {
+        
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        console.log(name + " " + email + " " + password);
+        const data =   {
+            "id": 20,
+            "firstName": "Jarmo",
+            "lastName": "Mäkiaho",
+            "address": {
+              "streetAddress": "79034 Swaniawski Course Suite 529",
+              "city": "Port Hoyt",
+              "zipCode": "60114-8579",
+              "country": "Montenegro"
+            },
+            "email": "Marlen.Rutherford@gmail.com",
+            "username": "Marlen_Rutherford48",
+            "homepage": "http://albina.name/",
+            "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/bowbrick/128.jpg",
+            "phoneNumber": "1-084-174-6165"
+          };
+        postOrPutJSON("url", "POST", data);
+        e.preventDefault();
+        });
+
+    }
+
 /**
  * TODO: 8.3 Register new user
  *       - Handle registration form submission

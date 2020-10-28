@@ -98,6 +98,7 @@ const handleRequest = async (request, response) => {
 
   // register new user
   if (filePath === '/api/register' && method.toUpperCase() === 'POST') {
+    console.log("hello");
     // Fail if not a JSON request
     if (!isJson(request)) {
       return responseUtils.badRequest(response, 'Invalid Content-Type. Expected application/json');

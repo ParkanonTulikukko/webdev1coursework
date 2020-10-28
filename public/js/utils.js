@@ -30,7 +30,7 @@ const getJSON = async url => {
  * Again remember that async function always returns a Promise.
  *
  * @param {string} url resource url on the server
- * @param {string} method "PUT" or "POST"
+ * @param {string} method "PUT" or "POST" 
  * @param {Object|Array} data payload data be sent to the server as JSON
  * @returns {Promise<*>} promise that resolves to the parsed JSON
  */
@@ -40,8 +40,23 @@ const postOrPutJSON = async (url, method, data = {}) => {
     throw 'Invalid method! Valid methods are POST and PUT!';
   }
 
+  fetch('api/register', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
   // TODO: 8.3 Implement this
-  throw new Error('Not Implemented');
+
+  //throw new Error('Not Implemented');
 };
 
 /**
