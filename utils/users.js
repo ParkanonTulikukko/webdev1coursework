@@ -12,6 +12,7 @@
  * a plain const could not be redefined after initialization but object
  * properties do not have that restriction.
  */
+
 const data = {
   // make copies of users (prevents changing from outside this module/file)
   users: require('../users.json').map(user => ({ ...user })),
@@ -48,6 +49,7 @@ const generateId = () => {
   return id;
 };
 
+
 /**
  * Check if email is already in use by another user
  *
@@ -55,9 +57,13 @@ const generateId = () => {
  * @returns {boolean}
  */
 const emailInUse = email => {
-  // TODO: 8.3 Check if there already exists a user with a given email
-  throw new Error('Not Implemented');
+  var isItInUse = data.users.some(function (user) {
+        return (email === user.email);
+        });
+  return isItInUse; 
 };
+
+//emailInUse("email");
 
 /**
  * Return user object with the matching email and password or undefined if not found
@@ -71,8 +77,19 @@ const emailInUse = email => {
  */
 const getUser = (email, password) => {
   // TODO: 8.3 Get user whose email and password match the provided values
-  throw new Error('Not Implemented');
-};
+  //data.users.forEach(getUser);
+  let foundedUser = undefined;
+  for (i = 0; i < data.users.length; i++) {
+    if (data.users[i].password === password && data.users[i].email === email) {
+      foundedUser = JSON.parse(JSON.stringify(data.users[i]));
+      }//if
+    }//for
+
+  return foundedUser;  
+  
+  };
+
+//console.log(getUser("admin@email.com","1234567890"));
 
 /**
  * Return user object with the matching ID or undefined if not found.
@@ -84,8 +101,14 @@ const getUser = (email, password) => {
  * @returns {Object|undefined}
  */
 const getUserById = userId => {
-  // TODO: 8.3 Find user by user id
-  throw new Error('Not Implemented');
+  let foundedUser = undefined;
+  for (i = 0; i < data.users.length; i++) {
+    if (data.users[i]._id === userId) {
+      foundedUser = JSON.parse(JSON.stringify(data.users[i]));
+      }//if
+    }//for
+
+  return foundedUser;  
 };
 
 /**
@@ -95,10 +118,23 @@ const getUserById = userId => {
  * @returns {Object|undefined} deleted user or undefined if user does not exist
  */
 const deleteUserById = userId => {
-  // TODO: 8.3 Delete user with a given id
-  throw new Error('Not Implemented');
-};
+  //30) should delete an existing user with the given ID
+  //31) should return the deleted user object
+  for (i = 0; i < data.users.length; i++) {
+    if (data.users[i]._id === userId) {
+      let deletedUser = JSON.parse(JSON.stringify(data.users[i]));
+      data.users.splice(i, 1);
+      console.log(deletedUser);
+      return deletedUser;
+      }//if
+    }//for
+  return undefined;
+  }
 
+/*console.log(deleteUserById("s7ygctl5v"));  
+console.log(deleteUserById("s7y6ctl4v"));
+console.log(data.users);
+*/
 /**
  * Return all users
  *
@@ -108,9 +144,8 @@ const deleteUserById = userId => {
  * @returns {Array<Object>} all users
  */
 const getAllUsers = () => {
-  // TODO: 8.3 Retrieve all users
-  throw new Error('Not Implemented');
-};
+  return JSON.parse(JSON.stringify(data.users));
+  };
 
 /**
  * Save new user
@@ -125,9 +160,12 @@ const getAllUsers = () => {
  * @returns {Object} copy of the created user
  */
 const saveNewUser = user => {
-  // TODO: 8.3 Save new user
-  // Use generateId() to assign a unique id to the newly created user.
-  throw new Error('Not Implemented');
+  if (user.role === null || user.role === undefined) {
+    user.role = "customer";
+    }
+  user._id = generateId();
+  data.users.push(JSON.parse(JSON.stringify(user)));
+  return JSON.parse(JSON.stringify(user));
 };
 
 /**
@@ -144,8 +182,17 @@ const saveNewUser = user => {
  * @throws {Error} error object with message "Unknown role"
  */
 const updateUserRole = (userId, role) => {
-  // TODO: 8.3 Update user's role
-  throw new Error('Not Implemented');
+  console.log("juuser id on " + userId);
+  let user = deleteUserById(userId);
+  if (user === undefined) {
+    return undefined;
+    }
+  if (role != "customer" && role != "admin") {
+    throw new Error('Unknown role');
+    }
+  user.role = role;
+  data.users.push(JSON.parse(JSON.stringify(user))); 
+  return JSON.parse(JSON.stringify(user));
 };
 
 /**
@@ -158,8 +205,20 @@ const updateUserRole = (userId, role) => {
  * @returns {Array<string>} Array of error messages or empty array if user is valid
  */
 const validateUser = user => {
-  // TODO: 8.3 Validate user before saving
-  throw new Error('Not Implemented');
+
+  let errors = [];
+
+  if (!user.hasOwnProperty("name")) 
+    {errors.push('Missing name');}
+  if (!user.hasOwnProperty("email")) 
+    {errors.push('Missing email');}
+  if (!user.hasOwnProperty("password")) 
+    {errors.push('Missing password');}  
+  if (user.role != "admin" && user.role != "customer" && user.role != undefined) {
+    errors.push("Unknown role");
+    }
+    
+  return errors;
 };
 
 module.exports = {
