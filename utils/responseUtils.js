@@ -1,7 +1,13 @@
+const { createResponse } = require('node-mocks-http');
+
 const basicAuthChallenge = response => {
   // TODO: 8.4 Send proper basic authentication challenge headers
-  throw new Error('Not Implemented');
+  response.statusCode = 401;
+  response.setHeader('www-authenticate', 'Basic');
 };
+
+let response = createResponse();
+basicAuthChallenge(response);
 
 const sendJson = (response, payload, code = 200) => {
   response.writeHead(code, { 'Content-Type': 'application/json' });

@@ -91,10 +91,13 @@ const handleRequest = async (request, response) => {
 
   // GET all users
   if (filePath === '/api/users' && method.toUpperCase() === 'GET') {
+    // TODO: 8.4 Add authentication (only allowed to users with role "admin")
+    // 1) should respond with "401 Unauthorized" when Authorization header is missing
+    if (request.headers['authorization'] === undefined || request.headers['authorization'] === "") {
+      return responseUtils.basicAuthChallenge(response);
+      }
     // TODO: 8.3 Return all users as JSON
     return responseUtils.sendJson(response, getAllUsers());
-    // TODO: 8.4 Add authentication (only allowed to users with role "admin")
-    throw new Error('Not Implemented');
   }
 
   // register new user

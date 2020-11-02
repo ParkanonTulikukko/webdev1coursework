@@ -1,3 +1,14 @@
+const { createRequest } = require('node-mocks-http');
+const getRequest = headers => createRequest({ headers });
+const getHeaders = () => {
+  return {
+    authorization: `Basic YWRtaW5AZW1haWwuY29tOjEyMzQ1Njc4OTA=`,
+    accept:
+      'text/html,application/xhtml+xml,application/json,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'content-type': 'application/json'
+  };
+};
+
 /**
  * Decode, parse and return user credentials (username and password)
  * from the Authorization header.
@@ -11,8 +22,38 @@ const getCredentials = request => {
   //       You need to first decode the header back to its original form ("email:password").
   //  See: https://attacomsian.com/blog/nodejs-base64-encode-decode
   //       https://stackabuse.com/encoding-and-decoding-base64-strings-in-node-js/
-  throw new Error('Not Implemented');
+  
+  //7) should return null when "Authorization" type is not "Basic"
+  //8) should return Array when "Authorization" type is "Basic"
+  //9) should return parsed credentials in an Array when "Authorization" header is correct
+
+  if (request.headers['authorization'] === undefined || request.headers['authorization'] === "") {
+    return null;
+    }
+
+  if (request.headers['authorization'].substring(0, 5) != "Basic" ) {
+    return null;  
+    }
+
+  else {
+    let length = request.headers['authorization'].length;
+    let codedCredentials = request.headers['authorization'].substring(6, length+1);
+    // create buffer using base64 codec
+    const buff = Buffer.from(codedCredentials, 'base64');
+    // decode buffer as UTF-8
+    const decodedCredentials = buff.toString('utf-8');
+    let separatorIndex = decodedCredentials.indexOf(":");
+    let credentialsArray = [decodedCredentials.substr(0, separatorIndex), decodedCredentials.substr(separatorIndex+1, decodedCredentials.length)];
+    return credentialsArray;
+    }  
+
 };
+/*
+let req = getRequest(getHeaders);
+req.headers['authorization'] = `Basic YWRtaW5AZW1haWwuY29tOjEyMzQ1Njc4OTA=`;
+console.log(req.headers);
+console.log(getCredentials(req));
+*/
 
 /**
  * Does the client accept JSON responses?
