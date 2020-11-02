@@ -4,6 +4,7 @@ const basicAuthChallenge = response => {
   // TODO: 8.4 Send proper basic authentication challenge headers
   response.statusCode = 401;
   response.setHeader('www-authenticate', 'Basic');
+  return response.end();
 };
 
 let response = createResponse();

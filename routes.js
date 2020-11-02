@@ -1,7 +1,9 @@
 const responseUtils = require('./utils/responseUtils');
+const users = require('./utils/users');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
 const { emailInUse, getAllUsers, saveNewUser, validateUser, updateUserRole } = require('./utils/users');
+const requestUtils = require('./utils/requestUtils');
 
 /**
  * Known API routes and their allowed methods
@@ -91,11 +93,38 @@ const handleRequest = async (request, response) => {
 
   // GET all users
   if (filePath === '/api/users' && method.toUpperCase() === 'GET') {
+
     // TODO: 8.4 Add authentication (only allowed to users with role "admin")
-    // 1) should respond with "401 Unauthorized" when Authorization header is missing
-    if (request.headers['authorization'] === undefined || request.headers['authorization'] === "") {
+
+    //should respond with Basic Auth Challenge when Authorization header is missing
+    //should respond with Basic Auth Challenge when Authorization header is empty
+    let authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
       return responseUtils.basicAuthChallenge(response);
       }
+
+    //checking if authorization header is properly encoded
+    //by encoding it back to base64 and comparing the result with the original string
+    let length = request.headers['authorization'].length;
+    let codedCredentials = request.headers['authorization'].substring(6, length+1);
+    const buff = Buffer.from(codedCredentials, 'base64');
+    if (codedCredentials != buff.toString('base64')) {
+      return responseUtils.basicAuthChallenge(response);
+      }  
+
+    //should respond with Basic Auth Challenge when Authorization credentials are incorrect
+    let credentials = requestUtils.getCredentials(request);
+    let user = users.getUser(credentials[0], credentials[1]);
+    if (user === undefined) {
+      return responseUtils.basicAuthChallenge(response);
+      }
+      
+    //should respond with "403 Forbidden" when customer credentials are received
+    if (user.role === "customer") {
+      response.statusCode = 403;
+      return response.end();
+      } 
+
     // TODO: 8.3 Return all users as JSON
     return responseUtils.sendJson(response, getAllUsers());
   }
