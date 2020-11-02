@@ -20,7 +20,10 @@
  */
 const getJSON = async url => {
   // TODO: 8.3 Implement this
-  throw new Error('Not Implemented');
+  const res = await fetch(url,{});
+  const json = await res.json();
+  return json;
+  // throw new Error('Not Implemented');
 };
 
 /**
@@ -39,21 +42,32 @@ const postOrPutJSON = async (url, method, data = {}) => {
   if (method !== 'POST' && method !== 'PUT') {
     throw 'Invalid method! Valid methods are POST and PUT!';
   }
-
-  fetch('api/register', {
-    method: 'POST', // or 'PUT'
-    headers: {
-      'Content-Type': 'application/json',
+  // PUT method is not implemented yet in any way
+  const meth = method === 'POST' ? 'POST' : 'PUT';
+  const head = {
+    'method': meth,
+    'headers': {
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data),
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Success:', data);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+    'body': JSON.stringify(data)
+  }
+
+  const res = await fetch(url, head);
+  if (res.ok) {
+    const json = await res.json();
+    return json;
+  }
+  
+
+  /* fetch(url, head)
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    }); */
+  
   // TODO: 8.3 Implement this
 
   //throw new Error('Not Implemented');

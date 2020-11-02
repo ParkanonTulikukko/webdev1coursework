@@ -32,3 +32,35 @@
  *       - Deleting a user successfully should show a notification message "Deleted user {User Name}"
  *       - Use createNotification() function from utils.js to create notifications
  */
+
+ //8.3
+
+window.onload = async () => {
+    const userdata = await getJSON('api/users');
+    //console.log(userdata);
+    const temp = document.getElementById('user-template');
+    const userdiv = document.getElementById('users-container');
+    //console.log(temp);
+    for (user of userdata) {
+        let tmp = temp.content.cloneNode(true);
+        //console.log(tmp);
+        tmp.querySelector('.item-row').setAttribute('id', 'user-' +user._id);
+
+        let name = tmp.querySelector('.user-name');
+        name.setAttribute('id', 'name-' +user._id);
+        name.textContent = user.name;
+
+        let email = tmp.querySelector('.user-email');
+        email.setAttribute('id', 'email-' +user._id);
+        email.textContent = user.email;
+
+        let role = tmp.querySelector('.user-role');
+        role.setAttribute('id', 'role-' +user._id);
+        role.textContent = user.role;
+
+        tmp.querySelector('.modify-button').setAttribute('id', 'modify-' +user._id);
+        tmp.querySelector('.delete-button').setAttribute('id', 'delete-' +user._id);
+
+        userdiv.append(tmp);
+    }
+}

@@ -124,7 +124,7 @@ const deleteUserById = userId => {
     if (data.users[i]._id === userId) {
       let deletedUser = JSON.parse(JSON.stringify(data.users[i]));
       data.users.splice(i, 1);
-      console.log(deletedUser);
+      //console.log(deletedUser);
       return deletedUser;
       }//if
     }//for
@@ -160,7 +160,8 @@ const getAllUsers = () => {
  * @returns {Object} copy of the created user
  */
 const saveNewUser = user => {
-  if (user.role === null || user.role === undefined) {
+  // Added the third rule, it seems all new users should be customers (mocha test)
+  if (user.role === null || user.role === undefined || user.role !== "customer") {
     user.role = "customer";
     }
   user._id = generateId();
@@ -182,7 +183,7 @@ const saveNewUser = user => {
  * @throws {Error} error object with message "Unknown role"
  */
 const updateUserRole = (userId, role) => {
-  console.log("juuser id on " + userId);
+  //console.log("juuser id on " + userId);
   let user = deleteUserById(userId);
   if (user === undefined) {
     return undefined;
@@ -217,7 +218,7 @@ const validateUser = user => {
   if (user.role != "admin" && user.role != "customer" && user.role != undefined) {
     errors.push("Unknown role");
     }
-    
+
   return errors;
 };
 

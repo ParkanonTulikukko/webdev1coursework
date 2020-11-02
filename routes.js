@@ -1,7 +1,7 @@
 const responseUtils = require('./utils/responseUtils');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
-const { emailInUse, getAllUsers, saveNewUser, validateUser } = require('./utils/users');
+const { emailInUse, getAllUsers, saveNewUser, validateUser, updateUserRole } = require('./utils/users');
 
 /**
  * Known API routes and their allowed methods
@@ -92,13 +92,14 @@ const handleRequest = async (request, response) => {
   // GET all users
   if (filePath === '/api/users' && method.toUpperCase() === 'GET') {
     // TODO: 8.3 Return all users as JSON
+    return responseUtils.sendJson(response, getAllUsers());
     // TODO: 8.4 Add authentication (only allowed to users with role "admin")
     throw new Error('Not Implemented');
   }
 
   // register new user
   if (filePath === '/api/register' && method.toUpperCase() === 'POST') {
-    console.log("hello");
+    //console.log("hello");
     // Fail if not a JSON request
     if (!isJson(request)) {
       return responseUtils.badRequest(response, 'Invalid Content-Type. Expected application/json');
@@ -106,7 +107,15 @@ const handleRequest = async (request, response) => {
 
     // TODO: 8.3 Implement registration
     // You can use parseBodyJson(request) from utils/requestUtils.js to parse request body
-    throw new Error('Not Implemented');
+    const newUser = await parseBodyJson(request);
+    let errors = validateUser(newUser);
+    if (errors.length === 0 && !emailInUse(newUser.email)) {
+      let nu = saveNewUser(newUser);
+      return responseUtils.createdResource(response, nu, 'test')
+    } else {
+      return responseUtils.badRequest(response, 'test');
+    }
+    // throw new Error('Not Implemented');
   }
 };
 
