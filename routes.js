@@ -2,7 +2,7 @@ const responseUtils = require('./utils/responseUtils');
 const users = require('./utils/users');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
-const { emailInUse, getAllUsers, saveNewUser, validateUser, updateUserRole } = require('./utils/users');
+const { emailInUse, getAllUsers, saveNewUser, validateUser, updateUserRole, getUserById } = require('./utils/users');
 const requestUtils = require('./utils/requestUtils');
 
 /**
@@ -72,7 +72,49 @@ const handleRequest = async (request, response) => {
   if (matchUserId(filePath)) {
     // TODO: 8.5 Implement view, update and delete a single user by ID (GET, PUT, DELETE)
     // You can use parseBodyJson(request) from utils/requestUtils.js to parse request body
-    throw new Error('Not Implemented');
+    let authorization = request.headers['authorization'];
+    // auth checks
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    let credentials = requestUtils.getCredentials(request);
+    let user = users.getUser(credentials[0], credentials[1]);
+    if (user === undefined) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (user.role === 'customer') {
+      return responseUtils.forbidden(response);
+    }
+    
+    let fp = filePath.split('/');
+    let userid = fp[fp.length-1];
+    if (getUserById(userid) === undefined) return responseUtils.notFound(response);
+    if (method.toUpperCase() === 'GET' || method.toUpperCase() === 'PUT') {
+      if (method.toUpperCase() === 'GET') {
+        let user = users.getUserById(userid);
+        return responseUtils.sendJson(response, user);
+      } else {
+        let body = await parseBodyJson(request);
+        if (body.role === 'customer' || body.role === 'admin') {
+          return responseUtils.sendJson(response, updateUserRole(userid, body.role));
+        } else {
+          return responseUtils.badRequest(response);
+        }
+      }
+    // only url is passed, no json body to make user object out of.
+    } else if (method.toUpperCase() === 'DELETE') {
+      let fp = filePath.split('/');
+      let userid = fp[fp.length-1];
+      let user = users.getUserById(userid);
+      if (typeof user !== 'undefined') {
+        return responseUtils.sendJson(response, users.deleteUserById(userid));
+      } else {
+        return responseUtils.badRequest(response, 'User to be deleted was not found.');
+      }
+    } else {
+      return responseUtils.badRequest(response);
+    }
+    // throw new Error('Not Implemented');
   }
 
   // Default to 404 Not Found if unknown url
