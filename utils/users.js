@@ -57,7 +57,7 @@ const generateId = () => {
  * @returns {boolean}
  */
 const emailInUse = email => {
-  var isItInUse = data.users.some(function (user) {
+  const isItInUse = data.users.some(function (user) {
         return (email === user.email);
         });
   return isItInUse; 
@@ -79,7 +79,7 @@ const getUser = (email, password) => {
   // TODO: 8.3 Get user whose email and password match the provided values
   //data.users.forEach(getUser);
   let foundedUser = undefined;
-  for (i = 0; i < data.users.length; i++) {
+  for (let i = 0; i < data.users.length; i++) {
     if (data.users[i].password === password && data.users[i].email === email) {
       foundedUser = JSON.parse(JSON.stringify(data.users[i]));
       }//if
@@ -102,7 +102,7 @@ const getUser = (email, password) => {
  */
 const getUserById = userId => {
   let foundedUser = undefined;
-  for (i = 0; i < data.users.length; i++) {
+  for (let i = 0; i < data.users.length; i++) {
     if (data.users[i]._id === userId) {
       foundedUser = JSON.parse(JSON.stringify(data.users[i]));
       }//if
@@ -120,16 +120,16 @@ const getUserById = userId => {
 const deleteUserById = userId => {
   //30) should delete an existing user with the given ID
   //31) should return the deleted user object
-  for (i = 0; i < data.users.length; i++) {
+  for (let i = 0; i < data.users.length; i++) {
     if (data.users[i]._id === userId) {
-      let deletedUser = JSON.parse(JSON.stringify(data.users[i]));
+      const deletedUser = JSON.parse(JSON.stringify(data.users[i]));
       data.users.splice(i, 1);
       //console.log(deletedUser);
       return deletedUser;
       }//if
     }//for
   return undefined;
-  }
+  };
 
 /*console.log(deleteUserById("s7ygctl5v"));  
 console.log(deleteUserById("s7y6ctl4v"));
@@ -184,11 +184,11 @@ const saveNewUser = user => {
  */
 const updateUserRole = (userId, role) => {
   //console.log("juuser id on " + userId);
-  let user = deleteUserById(userId);
+  const user = deleteUserById(userId);
   if (user === undefined) {
     return undefined;
     }
-  if (role != "customer" && role != "admin") {
+  if (role !== "customer" && role !== "admin") {
     throw new Error('Unknown role');
     }
   user.role = role;
@@ -207,15 +207,15 @@ const updateUserRole = (userId, role) => {
  */
 const validateUser = user => {
 
-  let errors = [];
+  const errors = [];
 
-  if (!user.hasOwnProperty("name")) 
+  if (!Object.prototype.hasOwnProperty.call(user, "name")) 
     {errors.push('Missing name');}
-  if (!user.hasOwnProperty("email")) 
+  if (!Object.prototype.hasOwnProperty.call(user, "email")) 
     {errors.push('Missing email');}
-  if (!user.hasOwnProperty("password")) 
+  if (!Object.prototype.hasOwnProperty.call(user, "password")) 
     {errors.push('Missing password');}  
-  if (user.role != "admin" && user.role != "customer" && user.role != undefined) {
+  if (user.role !== "admin" && user.role !== "customer" && user.role !== undefined) {
     errors.push("Unknown role");
     }
 

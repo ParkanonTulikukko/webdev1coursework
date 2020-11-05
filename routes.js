@@ -72,13 +72,13 @@ const handleRequest = async (request, response) => {
   if (matchUserId(filePath)) {
     // TODO: 8.5 Implement view, update and delete a single user by ID (GET, PUT, DELETE)
     // You can use parseBodyJson(request) from utils/requestUtils.js to parse request body
-    let authorization = request.headers['authorization'];
+    const authorization = request.headers['authorization'];
     // auth checks
     if (authorization === undefined || authorization === "") {
       return responseUtils.basicAuthChallenge(response);
     }
-    let credentials = requestUtils.getCredentials(request);
-    let user = users.getUser(credentials[0], credentials[1]);
+    const credentials = requestUtils.getCredentials(request);
+    const user = users.getUser(credentials[0], credentials[1]);
     if (user === undefined) {
       return responseUtils.basicAuthChallenge(response);
     }
@@ -86,15 +86,15 @@ const handleRequest = async (request, response) => {
       return responseUtils.forbidden(response);
     }
     
-    let fp = filePath.split('/');
-    let userid = fp[fp.length-1];
+    const fp = filePath.split('/');
+    const userid = fp[fp.length-1];
     if (getUserById(userid) === undefined) return responseUtils.notFound(response);
     if (method.toUpperCase() === 'GET' || method.toUpperCase() === 'PUT') {
       if (method.toUpperCase() === 'GET') {
-        let user = users.getUserById(userid);
+        const user = users.getUserById(userid);
         return responseUtils.sendJson(response, user);
       } else {
-        let body = await parseBodyJson(request);
+        const body = await parseBodyJson(request);
         if (body.role === 'customer' || body.role === 'admin') {
           return responseUtils.sendJson(response, updateUserRole(userid, body.role));
         } else {
@@ -103,9 +103,9 @@ const handleRequest = async (request, response) => {
       }
     // only url is passed, no json body to make user object out of.
     } else if (method.toUpperCase() === 'DELETE') {
-      let fp = filePath.split('/');
-      let userid = fp[fp.length-1];
-      let user = users.getUserById(userid);
+      const fp = filePath.split('/');
+      const userid = fp[fp.length-1];
+      const user = users.getUserById(userid);
       if (typeof user !== 'undefined') {
         return responseUtils.sendJson(response, users.deleteUserById(userid));
       } else {
@@ -140,27 +140,27 @@ const handleRequest = async (request, response) => {
 
     //should respond with Basic Auth Challenge when Authorization header is missing
     //should respond with Basic Auth Challenge when Authorization header is empty
-    let authorization = request.headers['authorization'];
+    const authorization = request.headers['authorization'];
     if (authorization === undefined || authorization === "") {
       return responseUtils.basicAuthChallenge(response);
       }
 
     //checking if authorization header is properly encoded
     //by encoding it back to base64 and comparing the result with the original string
-    let length = request.headers['authorization'].length;
-    let codedCredentials = request.headers['authorization'].substring(6, length+1);
+    const length = request.headers['authorization'].length;
+    const codedCredentials = request.headers['authorization'].substring(6, length+1);
     const buff = Buffer.from(codedCredentials, 'base64');
-    if (codedCredentials != buff.toString('base64')) {
+    if (codedCredentials !== buff.toString('base64')) {
       return responseUtils.basicAuthChallenge(response);
       }  
 
     //should respond with Basic Auth Challenge when Authorization credentials are incorrect
-    let credentials = requestUtils.getCredentials(request);
-    let user = users.getUser(credentials[0], credentials[1]);
+    const credentials = requestUtils.getCredentials(request);
+    const user = users.getUser(credentials[0], credentials[1]);
     if (user === undefined) {
       return responseUtils.basicAuthChallenge(response);
       }
-      
+
     //should respond with "403 Forbidden" when customer credentials are received
     if (user.role === "customer") {
       response.statusCode = 403;
@@ -182,10 +182,10 @@ const handleRequest = async (request, response) => {
     // TODO: 8.3 Implement registration
     // You can use parseBodyJson(request) from utils/requestUtils.js to parse request body
     const newUser = await parseBodyJson(request);
-    let errors = validateUser(newUser);
+    const errors = validateUser(newUser);
     if (errors.length === 0 && !emailInUse(newUser.email)) {
-      let nu = saveNewUser(newUser);
-      return responseUtils.createdResource(response, nu, 'test')
+      const nu = saveNewUser(newUser);
+      return responseUtils.createdResource(response, nu, 'test');
     } else {
       return responseUtils.badRequest(response, 'test');
     }

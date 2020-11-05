@@ -7,7 +7,7 @@ const basicAuthChallenge = response => {
   return response.end();
 };
 
-let response = createResponse();
+const response = createResponse();
 basicAuthChallenge(response);
 
 const sendJson = (response, payload, code = 200) => {

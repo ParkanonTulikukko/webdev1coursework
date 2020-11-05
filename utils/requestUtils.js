@@ -31,19 +31,19 @@ const getCredentials = request => {
     return null;
     }
 
-  if (request.headers['authorization'].substring(0, 5) != "Basic" ) {
+  if (request.headers['authorization'].substring(0, 5) !== "Basic" ) {
     return null;  
     }
 
   else {
-    let length = request.headers['authorization'].length;
-    let codedCredentials = request.headers['authorization'].substring(6, length+1);
+    const length = request.headers['authorization'].length;
+    const codedCredentials = request.headers['authorization'].substring(6, length+1);
     // create buffer using base64 codec
     const buff = Buffer.from(codedCredentials, 'base64');
     // decode buffer as UTF-8
     const decodedCredentials = buff.toString('utf-8');
-    let separatorIndex = decodedCredentials.indexOf(":");
-    let credentialsArray = [decodedCredentials.substr(0, separatorIndex), decodedCredentials.substr(separatorIndex+1, decodedCredentials.length)];
+    const separatorIndex = decodedCredentials.indexOf(":");
+    const credentialsArray = [decodedCredentials.substr(0, separatorIndex), decodedCredentials.substr(separatorIndex+1, decodedCredentials.length)];
     return credentialsArray;
     }  
 
@@ -69,9 +69,9 @@ const acceptsJson = request => {
 
   // checks if json is accepted (MIME-type application/json is assumed here)
   //console.log(request.headers["accept"].split(",").includes("application/json"))
-  let accept = request.headers["accept"]
+  const accept = request.headers["accept"];
   if (typeof accept !== "undefined") {
-    let l = accept
+    const l = accept;
     return (l.includes('application/json') || l.includes('*/*'));
   } else {
     return false;
@@ -87,9 +87,9 @@ const acceptsJson = request => {
  */
 const isJson = request => {
   // TODO: 8.3 Check whether request "Content-Type" is JSON or not
-  let h = request.headers["content-type"]
+  const h = request.headers["content-type"];
   if (typeof h === "undefined") return false;
-  return h.includes("application/json")
+  return h.includes("application/json");
   // throw new Error('Not Implemented');
 };
 

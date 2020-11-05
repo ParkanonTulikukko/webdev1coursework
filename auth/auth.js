@@ -26,7 +26,7 @@ const getCurrentUser = async request => {
 
   //console.log("*****get current user*****");
   //console.log(requestUtils.getCredentials(request)); 
-  let credentials = requestUtils.getCredentials(request);
+  const credentials = requestUtils.getCredentials(request);
   if (credentials === null) {
     return null;
     }
