@@ -36,14 +36,11 @@
  //8.3
 
 window.onload = async () => {
-    const userdata = await getJSON('api/users');
-    //console.log(userdata);
+    const userdata = await getJSON('/api/users');
     const temp = document.getElementById('user-template');
     const userdiv = document.getElementById('users-container');
-    //console.log(temp);
-    for (user of userdata) {
+    for (let user of userdata) {
         let tmp = temp.content.cloneNode(true);
-        //console.log(tmp);
         tmp.querySelector('.item-row').setAttribute('id', 'user-' +user._id);
 
         let name = tmp.querySelector('.user-name');
@@ -62,5 +59,49 @@ window.onload = async () => {
         tmp.querySelector('.delete-button').setAttribute('id', 'delete-' +user._id);
 
         userdiv.append(tmp);
+
+        // EventListener for each modify-button
+        userdiv.querySelector('#modify-' +user._id).addEventListener("click", async () => {
+            let ft = document.getElementById('form-template').content.cloneNode(true);
+            let mu = document.getElementById('modify-user');
+            if (document.getElementById('edit-user-form') !== null) {
+                document.querySelector('#edit-user-form').remove();
+            }
+                let data = await getJSON('/api/users/'+user._id);
+                let form = ft.querySelector('#edit-user-form');
+                form["_id"].value = data._id;
+                form['name'].value = data.name;
+                form['email'].value = data.email;
+                form['role'].value = data.role;
+                ft.querySelector('.text-align-center').textContent = 'Modify user '+data.name;
+                mu.append(ft);
+                // EventListener for update-button
+                document.getElementById('update-button').addEventListener("click", (e) => {
+                    e.preventDefault();
+                    (async () => {
+                    data.role = form['role'].value;
+                    let moddeduser = await postOrPutJSON('/api/users/'+user._id, "PUT", data);
+                    createNotification('Updated user ' +moddeduser.name, 'notifications-container');
+                    document.querySelector('#user-'+user._id).querySelector('.user-role').textContent=data.role;
+                    document.querySelector('#edit-user-form').remove();
+                    })();
+                });
+            
+        });
+
+        // EventListener for each delete-button
+        userdiv.querySelector('#delete-' +user._id).addEventListener("click", async () => {
+            //console.log(user._id);
+            let editf = document.querySelector('#edit-user-form');
+            if (editf !== null) editf.remove();
+            let asd = await deleteResourse('/api/users/'+user._id);
+            createNotification('Deleted user ' +asd.name, 'notifications-container');
+            document.getElementById('user-'+user._id).remove();
+        });
+
     }
+
+    
+    
+
 }
