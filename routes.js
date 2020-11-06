@@ -1,5 +1,6 @@
 const responseUtils = require('./utils/responseUtils');
 const users = require('./utils/users');
+const products = require('./utils/products');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
 const { emailInUse, getAllUsers, saveNewUser, validateUser, updateUserRole, getUserById } = require('./utils/users');
@@ -13,7 +14,8 @@ const requestUtils = require('./utils/requestUtils');
  */
 const allowedMethods = {
   '/api/register': ['POST'],
-  '/api/users': ['GET']
+  '/api/users': ['GET'],
+  '/api/products': ['GET'],
 };
 
 /**
@@ -63,9 +65,11 @@ const handleRequest = async (request, response) => {
   const { url, method, headers } = request;
   const filePath = new URL(url, `http://${headers.host}`).pathname;
 
+  console.log(filePath);
+
   // serve static files from public/ and return immediately
   if (method.toUpperCase() === 'GET' && !filePath.startsWith('/api')) {
-    const fileName = filePath === '/' || filePath === '' ? 'index.html' : filePath;
+    const fileName = (filePath === '/' || filePath === '') ? 'index.html' : filePath;
     return renderPublic(fileName, response);
   }
 
@@ -191,6 +195,30 @@ const handleRequest = async (request, response) => {
     }
     // throw new Error('Not Implemented');
   }
+
+  if (filePath === '/api/products' && method.toUpperCase() === 'GET') {
+    //1) should respond with "401 Unauthorized" when Authorization header is missing
+    //2) should respond with Basic Auth Challenge when Authorization header is missing
+    //Respond with Basic Auth Challenge (w/ status code 401) when "authorization" header is empty or missing
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+      }
+
+    //3) should respond with Basic Auth Challenge when Authorization credentials are incorrect
+    const credentials = requestUtils.getCredentials(request);
+    const user = users.getUser(credentials[0], credentials[1]);
+    if (user === undefined) {
+      return responseUtils.basicAuthChallenge(response);
+      }  
+
+    // should respond with JSON when admin credentials are received
+    // should respond with JSON when customer credentials are received
+    // should respond with correct data when admin credentials are received
+    // should respond with correct data when customer credentials are received
+    return responseUtils.sendJson(response, products.getAllProducts());
+    }
+
 };
 
 module.exports = { handleRequest };

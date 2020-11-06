@@ -563,7 +563,7 @@ describe('Routes', () => {
         .request(handleRequest)
         .get(productsUrl)
         .set('Accept', contentType);
-
+      console.log("responsen status: " + response.status);
       expect(response).to.have.status(401);
     });
 

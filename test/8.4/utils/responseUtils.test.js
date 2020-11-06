@@ -8,12 +8,14 @@ describe('Response Utils', () => {
     it('should set response status to 401', () => {
       const response = createResponse();
       responseUtils.basicAuthChallenge(response);
+      console.log("Ny se o: " + response.statusCode);
       expect(response.statusCode).to.equal(401);
     });
 
     it('should set response header "WWW-Authenticate" to "Basic"', () => {
       const response = createResponse();
       responseUtils.basicAuthChallenge(response);
+      console.log("hedari: " + response.getHeader('www-authenticate'));
       expect(response.hasHeader('www-authenticate')).to.be.true;
       expect(response.getHeader('www-authenticate')).to.equal('Basic');
     });
