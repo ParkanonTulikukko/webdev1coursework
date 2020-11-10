@@ -10,7 +10,14 @@ const mongoose = require('mongoose');
  */
 const getDbUrl = () => {
   // TODO: 9.3 Implement this
-  throw new Error('Implement this');
+
+  //throw new Error('Implement this');
+  require('dotenv').config();
+  if (process.env.DBURL !== undefined) {
+    return process.env.DBURL;
+  } else {
+    throw new Error('No DBURL environment variable!');
+  }
 };
 
 function connectDB () {
