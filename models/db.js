@@ -16,7 +16,7 @@ const getDbUrl = () => {
   if (process.env.DBURL !== undefined) {
     return process.env.DBURL;
   } else {
-    throw new Error('No DBURL environment variable!');
+    return 'mongodb://localhost:27017/WebShopDb';
   }
 };
 
