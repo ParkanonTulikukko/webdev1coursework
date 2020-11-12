@@ -33,75 +33,77 @@
  *       - Use createNotification() function from utils.js to create notifications
  */
 
- //8.3
+//8.3
 
 window.onload = async () => {
-    const userdata = await getJSON('/api/users');
+  const userdata = await getJSON('/api/users');
+  // only enter the block if userdata was actually returned by the request.
+  if (userdata) {
     const temp = document.getElementById('user-template');
     const userdiv = document.getElementById('users-container');
     for (let user of userdata) {
-        let tmp = temp.content.cloneNode(true);
-        tmp.querySelector('.item-row').setAttribute('id', 'user-' +user._id);
+      let tmp = temp.content.cloneNode(true);
+      tmp.querySelector('.item-row').setAttribute('id', 'user-' + user._id);
 
-        let name = tmp.querySelector('.user-name');
-        name.setAttribute('id', 'name-' +user._id);
-        name.textContent = user.name;
+      let name = tmp.querySelector('.user-name');
+      name.setAttribute('id', 'name-' + user._id);
+      name.textContent = user.name;
 
-        let email = tmp.querySelector('.user-email');
-        email.setAttribute('id', 'email-' +user._id);
-        email.textContent = user.email;
+      let email = tmp.querySelector('.user-email');
+      email.setAttribute('id', 'email-' + user._id);
+      email.textContent = user.email;
 
-        let role = tmp.querySelector('.user-role');
-        role.setAttribute('id', 'role-' +user._id);
-        role.textContent = user.role;
+      let role = tmp.querySelector('.user-role');
+      role.setAttribute('id', 'role-' + user._id);
+      role.textContent = user.role;
 
-        tmp.querySelector('.modify-button').setAttribute('id', 'modify-' +user._id);
-        tmp.querySelector('.delete-button').setAttribute('id', 'delete-' +user._id);
+      tmp.querySelector('.modify-button').setAttribute('id', 'modify-' + user._id);
+      tmp.querySelector('.delete-button').setAttribute('id', 'delete-' + user._id);
 
-        userdiv.append(tmp);
+      userdiv.append(tmp);
 
-        // EventListener for each modify-button
-        userdiv.querySelector('#modify-' +user._id).addEventListener("click", async () => {
-            let ft = document.getElementById('form-template').content.cloneNode(true);
-            let mu = document.getElementById('modify-user');
-            if (document.getElementById('edit-user-form') !== null) {
-                document.querySelector('#edit-user-form').remove();
-            }
-                let data = await getJSON('/api/users/'+user._id);
-                let form = ft.querySelector('#edit-user-form');
-                form["_id"].value = data._id;
-                form['name'].value = data.name;
-                form['email'].value = data.email;
-                form['role'].value = data.role;
-                ft.querySelector('.text-align-center').textContent = 'Modify user '+data.name;
-                mu.append(ft);
-                // EventListener for update-button
-                document.getElementById('update-button').addEventListener("click", (e) => {
-                    e.preventDefault();
-                    (async () => {
-                    data.role = form['role'].value;
-                    let moddeduser = await postOrPutJSON('/api/users/'+user._id, "PUT", data);
-                    createNotification('Updated user ' +moddeduser.name, 'notifications-container');
-                    document.querySelector('#user-'+user._id).querySelector('.user-role').textContent=data.role;
-                    document.querySelector('#edit-user-form').remove();
-                    })();
-                });
-            
+      // EventListener for each modify-button
+      userdiv.querySelector('#modify-' + user._id).addEventListener("click", async () => {
+        let ft = document.getElementById('form-template').content.cloneNode(true);
+        let mu = document.getElementById('modify-user');
+        if (document.getElementById('edit-user-form') !== null) {
+          document.querySelector('#edit-user-form').remove();
+        }
+        let data = await getJSON('/api/users/' + user._id);
+        let form = ft.querySelector('#edit-user-form');
+        form["_id"].value = data._id;
+        form['name'].value = data.name;
+        form['email'].value = data.email;
+        form['role'].value = data.role;
+        ft.querySelector('.text-align-center').textContent = 'Modify user ' + data.name;
+        mu.append(ft);
+        // EventListener for update-button
+        document.getElementById('update-button').addEventListener("click", (e) => {
+          e.preventDefault();
+          (async () => {
+            data.role = form['role'].value;
+            let moddeduser = await postOrPutJSON('/api/users/' + user._id, "PUT", data);
+            createNotification('Updated user ' + moddeduser.name, 'notifications-container');
+            document.querySelector('#user-' + user._id).querySelector('.user-role').textContent = data.role;
+            document.querySelector('#edit-user-form').remove();
+          })();
         });
 
-        // EventListener for each delete-button
-        userdiv.querySelector('#delete-' +user._id).addEventListener("click", async () => {
-            //console.log(user._id);
-            let editf = document.querySelector('#edit-user-form');
-            if (editf !== null) editf.remove();
-            let asd = await deleteResourse('/api/users/'+user._id);
-            createNotification('Deleted user ' +asd.name, 'notifications-container');
-            document.getElementById('user-'+user._id).remove();
-        });
+      });
+
+      // EventListener for each delete-button
+      userdiv.querySelector('#delete-' + user._id).addEventListener("click", async () => {
+        //console.log(user._id);
+        let editf = document.querySelector('#edit-user-form');
+        if (editf !== null) editf.remove();
+        let asd = await deleteResourse('/api/users/' + user._id);
+        createNotification('Deleted user ' + asd.name, 'notifications-container');
+        document.getElementById('user-' + user._id).remove();
+      });
 
     }
+  }
 
-    
-    
+
 
 }
