@@ -159,4 +159,7 @@ lib-cov
 # nyc test coverage
 .nyc_output
 
+# Exercise 9.3 .env file
+.env
+
 

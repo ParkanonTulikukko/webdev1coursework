@@ -1,8 +1,11 @@
 const http = require('http');
 const { handleRequest } = require('./routes');
+const { connectDB } = require('./models/db');
 
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(handleRequest);
+
+connectDB();
 
 server.on('error', err => {
   console.error(err);

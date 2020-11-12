@@ -1,5 +1,5 @@
 const requestUtils = require('../utils/requestUtils.js');
-const users = require('../utils/users.js');
+const User = require('../models/user.js');
 
 const { createRequest } = require('node-mocks-http');
 const getRequest = headers => createRequest({ headers });
@@ -29,9 +29,16 @@ const getCurrentUser = async request => {
   const credentials = requestUtils.getCredentials(request);
   if (credentials === null) {
     return null;
-    }
+  }
   //console.log(credentials[0] + " " + credentials[1]);
-  return users.getUser(credentials[0], credentials[1]);
+  //return users.getUser(credentials[0], credentials[1]);
+  const user = await User.findOne({ email: credentials[0] }).exec();
+  if (user !== null) {
+    if (await user.checkPassword(credentials[1])) {
+      return user;
+    } 
+  }
+  return null;
 };
 
 /*
