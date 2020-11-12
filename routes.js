@@ -205,9 +205,11 @@ const handleRequest = async (request, response) => {
     // throw new Error('Not Implemented');
     try {
       let newUserAdded = new User(newUser);
+      newUserAdded.role = "customer";
       await newUserAdded.save();
+      return responseUtils.createdResource(response, newUserAdded);
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       return responseUtils.badRequest(response, 'invalid user info');
     }
   }
