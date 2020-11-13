@@ -1,11 +1,13 @@
+const products = require('../products.json');
+
 /**
  * Send all products as JSON
  *
  * @param {http.ServerResponse} response
  */
 const getAllProducts = async response => {
-  // TODO: 10.1 Implement this
-  throw new Error('Not Implemented');
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  response.end(JSON.stringify(products));
 };
 
 module.exports = { getAllProducts };

@@ -1,7 +1,9 @@
 const responseUtils = require('./utils/responseUtils');
+const controllerUsers = require('./controllers/users');
 const User = require('./models/user');
 const { getCurrentUser } = require('./auth/auth');
 const products = require('./utils/products');
+const controllerProducts = require('./controllers/products');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
 //const users = require('./utils/users');
@@ -67,7 +69,7 @@ const handleRequest = async (request, response) => {
   const { url, method, headers } = request;
   const filePath = new URL(url, `http://${headers.host}`).pathname;
 
-  //console.log(filePath);
+  console.log(filePath);
 
   // serve static files from public/ and return immediately
   if (method.toUpperCase() === 'GET' && !filePath.startsWith('/api')) {
@@ -96,19 +98,19 @@ const handleRequest = async (request, response) => {
     const fp = filePath.split('/');
     const userid = fp[fp.length - 1];
     const user = await User.findById(userid);
-    //if (getUserById(userid) === undefined) return responseUtils.notFound(response);
+
     if (user === null) return responseUtils.notFound(response);
     if (method.toUpperCase() === 'GET' || method.toUpperCase() === 'PUT') {
       if (method.toUpperCase() === 'GET') {
-        //const user = users.getUserById(userid);
+        //TÄSSÄ PALAUTETAAN USER-ID TIEDOT
         return responseUtils.sendJson(response, user);
+        //controllerUsers.viewUser(response, userid, currentUser);
       } else {
         const body = await parseBodyJson(request);
         if (body.role === 'customer' || body.role === 'admin') {
           //update role
           user.role = body.role;
           await user.save();
-          //return responseUtils.sendJson(response, updateUserRole(userid, body.role));
           return responseUtils.sendJson(response, user);
         } else {
           return responseUtils.badRequest(response);
@@ -146,8 +148,8 @@ const handleRequest = async (request, response) => {
   // GET all users
   if (filePath === '/api/users' && method.toUpperCase() === 'GET') {
 
+    console.log(request.headers['authorization']);
     // TODO: 8.4 Add authentication (only allowed to users with role "admin")
-
     //should respond with Basic Auth Challenge when Authorization header is missing
     //should respond with Basic Auth Challenge when Authorization header is empty
     const authorization = request.headers['authorization'];
@@ -180,12 +182,13 @@ const handleRequest = async (request, response) => {
     // TODO: 8.3 Return all users as JSON
     //return responseUtils.sendJson(response, getAllUsers());
     const allUsers = await User.find({});
-    return responseUtils.sendJson(response, allUsers);
+    //return responseUtils.sendJson(response, allUsers);
+    controllerUsers.getAllUsers(response);
+
   }
 
   // register new user
   if (filePath === '/api/register' && method.toUpperCase() === 'POST') {
-    //console.log("hello");
     // Fail if not a JSON request
     if (!isJson(request)) {
       return responseUtils.badRequest(response, 'Invalid Content-Type. Expected application/json');
@@ -234,7 +237,7 @@ const handleRequest = async (request, response) => {
     // should respond with JSON when customer credentials are received
     // should respond with correct data when admin credentials are received
     // should respond with correct data when customer credentials are received
-    return responseUtils.sendJson(response, products.getAllProducts());
+    controllerProducts.getAllProducts(response);
   }
 
 };

@@ -1,11 +1,13 @@
+const User = require('../models/user');
+
 /**
  * Send all users as JSON
  *
  * @param {http.ServerResponse} response
  */
 const getAllUsers = async response => {
-  // TODO: 10.1 Implement this
-  throw new Error('Not Implemented');
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  response.end(JSON.stringify(await User.find({})));
 };
 
 /**
@@ -42,7 +44,9 @@ const updateUser = async (response, userId, currentUser, userData) => {
  */
 const viewUser = async (response, userId, currentUser) => {
   // TODO: 10.1 Implement this
-  throw new Error('Not Implemented');
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  const user = await User.findById(userId);
+  response.end(JSON.stringify(user));
 };
 
 /**
