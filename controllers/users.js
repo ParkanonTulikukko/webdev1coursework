@@ -18,9 +18,12 @@ const getAllUsers = async response => {
  * @param {Object} currentUser (mongoose document object)
  */
 const deleteUser = async (response, userId, currentUser) => {
-  // TODO: 10.1 Implement this
-  throw new Error('Not Implemented');
-};
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  const user = await User.findById(userId);
+  //await User.deleteOne({ _id: userId });
+  response.end(JSON.stringify(user));
+  
+  };
 
 /**
  * Update user and send updated user as JSON
@@ -44,9 +47,11 @@ const updateUser = async (response, userId, currentUser, userData) => {
  */
 const viewUser = async (response, userId, currentUser) => {
   // TODO: 10.1 Implement this
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  const user = await User.findById(userId);
-  response.end(JSON.stringify(user));
+  //response.write(await User.findById(userId), function(err) { response.end(); })
+  //const user = await User.findById(userId);
+  response.writeHead(200, { 'Content-Type': 'application/json' })
+  response.end(JSON.stringify(await User.findById(userId)));
+  //response.end();
 };
 
 /**
