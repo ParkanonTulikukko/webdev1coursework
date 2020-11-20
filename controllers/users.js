@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const responseUtils = require('../utils/responseUtils');
 
 /**
  * Send all users as JSON
@@ -18,10 +19,22 @@ const getAllUsers = async response => {
  * @param {Object} currentUser (mongoose document object)
  */
 const deleteUser = async (response, userId, currentUser) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
   const user = await User.findById(userId);
-  User.deleteOne({ _id: userId });
-  response.end(JSON.stringify(user));
+  if (user !== null) {
+    if (userId.localeCompare(currentUser._id) == 0) {
+      console.log("ON SAMA");
+      responseUtils.badRequest(response, "Updating own data is not allowed");
+      }
+    else {
+      response.writeHead(200, { 'Content-Type': 'application/json' });
+      const user = await User.findById(userId);
+      await User.deleteOne({ _id: userId });
+      response.end(JSON.stringify(user));
+      }  
+    } 
+  else {
+    responseUtils.notFound(response);
+    }
   };
 
 /**
@@ -34,8 +47,7 @@ const deleteUser = async (response, userId, currentUser) => {
  */
 const updateUser = async (response, userId, currentUser, userData) => {
   // TODO: 10.1 Implement this
-  throw new Error('Not Implemented');
-};
+  };
 
 /**
  * Send user data as JSON
@@ -46,11 +58,19 @@ const updateUser = async (response, userId, currentUser, userData) => {
  */
 const viewUser = async (response, userId, currentUser) => {
   // TODO: 10.1 Implement this
+  /*
+  JOTENKIN TÄLLEEN:
   const user = await User.findById(userId);
-  console.log(user);
-  response.writeHead(200, { 'Content-Type': 'application/json' })
-  response.write(JSON.stringify(user));
-  response.end();
+  if (user !== null) {
+    const user = await User.findById(userId);
+    response.writeHead(200, { 'Content-Type': 'application/json' })
+    response.write(JSON.stringify(user));
+    response.end();
+    }
+  else {
+    responseUtils.notFound(response);
+    }
+   */ 
 };
 
 /**

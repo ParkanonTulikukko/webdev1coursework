@@ -88,6 +88,7 @@ const handleRequest = async (request, response) => {
     //const credentials = requestUtils.getCredentials(request);
     //const user = users.getUser(credentials[0], credentials[1]);
     const currentUser = await getCurrentUser(request);
+    
     if (currentUser === null) {
       return responseUtils.basicAuthChallenge(response);
     }
@@ -121,7 +122,7 @@ const handleRequest = async (request, response) => {
         //return responseUtils.sendJson(response, user);
         await controllerUsers.deleteUser(response, userid, currentUser);
       } else {
-        return responseUtils.badRequest(response, 'User to be deleted was not found.');
+        //return responseUtils.badRequest(response, 'User to be deleted was not found.');
       }
     } else {
       return responseUtils.badRequest(response);
