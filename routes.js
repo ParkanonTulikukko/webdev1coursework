@@ -102,9 +102,8 @@ const handleRequest = async (request, response) => {
     if (user === null) return responseUtils.notFound(response);
     if (method.toUpperCase() === 'GET' || method.toUpperCase() === 'PUT') {
       if (method.toUpperCase() === 'GET') {
-        //TÄSSÄ PALAUTETAAN USER-ID TIEDOT
         //return responseUtils.sendJson(response, user);
-        controllerUsers.viewUser(response, userid, currentUser);
+        await controllerUsers.viewUser(response, userid, currentUser);
       } else {
         const body = await parseBodyJson(request);
         if (body.role === 'customer' || body.role === 'admin') {
@@ -118,9 +117,9 @@ const handleRequest = async (request, response) => {
       }
     } else if (method.toUpperCase() === 'DELETE') {
       if (user !== null) {
-        controllerUsers.deleteUser(response, userid, currentUser);
         //await User.deleteOne({ _id: userid });
         //return responseUtils.sendJson(response, user);
+        await controllerUsers.deleteUser(response, userid, currentUser);
       } else {
         return responseUtils.badRequest(response, 'User to be deleted was not found.');
       }

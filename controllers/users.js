@@ -20,9 +20,8 @@ const getAllUsers = async response => {
 const deleteUser = async (response, userId, currentUser) => {
   response.writeHead(200, { 'Content-Type': 'application/json' });
   const user = await User.findById(userId);
-  //await User.deleteOne({ _id: userId });
+  User.deleteOne({ _id: userId });
   response.end(JSON.stringify(user));
-  
   };
 
 /**
@@ -47,14 +46,11 @@ const updateUser = async (response, userId, currentUser, userData) => {
  */
 const viewUser = async (response, userId, currentUser) => {
   // TODO: 10.1 Implement this
-  //response.write(await User.findById(userId), function(err) { response.end(); })
   const user = await User.findById(userId);
   console.log(user);
   response.writeHead(200, { 'Content-Type': 'application/json' })
   response.write(JSON.stringify(user));
-  //response.end(JSON.stringify(await User.findById(userId)));
-  response.end(function() {console.log("sit tää");} );
-  //response.end();
+  response.end();
 };
 
 /**
