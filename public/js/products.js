@@ -5,7 +5,7 @@ window.onload = async () => {
     
     const temp = document.getElementById('product-template');
     const productDiv = document.getElementById('products-container');
-    for (let product of productData) {
+    productData.map((product) => {
         let tmp = temp.content.cloneNode(true);
 
         let name = tmp.querySelector('.product-name');
@@ -31,6 +31,7 @@ window.onload = async () => {
             document.getElementById('notifications-container').textContent = textContent + "Added " + product.name + " to cart!";
             });
         
-        }//for   
+        //for   
 
-    }//window.onload
+    });
+}//window.onload
