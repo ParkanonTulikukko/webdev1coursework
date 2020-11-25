@@ -1,4 +1,6 @@
-const products = require('../products.json');
+//const products = require('../products.json');
+const Product = require('../models/product');
+const responseUtils = require('../utils/responseUtils');
 
 /**
  * Send all products as JSON
@@ -6,8 +8,16 @@ const products = require('../products.json');
  * @param {http.ServerResponse} response
  */
 const getAllProducts = async response => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.end(JSON.stringify(products));
-};
+  responseUtils.sendJson(response, await Product.find({}));
+  };
 
-module.exports = { getAllProducts };
+const deleteProduct = async (response, productId) => {
+  const product = await Product.findById(productId);
+  if (product !== null) {
+    await Product.deleteOne({ _id: productId });
+    responseUtils.sendJson(response, product); 
+    }    
+  else {responseUtils.notFound(response);}
+  };
+
+module.exports = { getAllProducts, deleteProduct };

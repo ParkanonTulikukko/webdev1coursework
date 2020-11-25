@@ -8,6 +8,7 @@ const responseUtils = require('../utils/responseUtils');
  */
 const getAllUsers = async response => {
   response.writeHead(200, { 'Content-Type': 'application/json' });
+  console.log(await User.find({}));
   response.end(JSON.stringify(await User.find({})));
 };
 
@@ -22,7 +23,6 @@ const deleteUser = async (response, userId, currentUser) => {
   const user = await User.findById(userId);
   if (user !== null) {
     if (userId.localeCompare(currentUser._id) == 0) {
-      console.log("ON SAMA");
       responseUtils.badRequest(response, "Updating own data is not allowed");
       }
     else {

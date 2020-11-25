@@ -73,6 +73,16 @@ window.onload = async () => {
 
     const orderButton = document.getElementById("place-order-button");
     orderButton.addEventListener("click", async () => {
+        //const name = document.getElementById("name").value;
+        //const email = document.getElementById("email").value;
+        //const password = document.getElementById("password").value;
+        const data = {
+          //'_id': undefined,
+          //'name': name,
+          //'email': email,
+          'item': 'hiustenkuivain',
+          'quantity': 66};
+        await postOrPutJSON("/api/orders", "POST", data);
         clearCart();
         cartDiv.innerHTML = "";
         document.getElementById('notifications-container').textContent = "Successfully created an order!";

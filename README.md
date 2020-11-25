@@ -3,10 +3,8 @@
 Member1:  name, email, student ID, 
 resposible for: TODO, short description of duties 
 
-Member2:  name, email, student ID, 
-resposible for: TODO, short description of duties 
-
-
+Member2:  Heikki Kuivala, heikki.kuivala@gmail.com, K88424, 
+resposible for: coding and documenting 
 
 # WebDev1 coursework assignment
 
@@ -60,3 +58,6 @@ TODO: list the security threats represented in the course slides.
 Document how your application protects against the threats.
 You are also free to add more security threats + protection here, if you will.
 
+## Project plan
+
+We're going to start the project by implementing function by function. If there's going to be problems, we will ask help via Teams discussion board. The functions will be implemented in that manner that they will  pass the mocha tests.

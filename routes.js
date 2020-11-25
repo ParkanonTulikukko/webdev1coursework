@@ -1,6 +1,7 @@
 const responseUtils = require('./utils/responseUtils');
 const controllerUsers = require('./controllers/users');
 const User = require('./models/user');
+const Product = require('./models/product');
 const { getCurrentUser } = require('./auth/auth');
 const products = require('./utils/products');
 const controllerProducts = require('./controllers/products');
@@ -20,6 +21,7 @@ const allowedMethods = {
   '/api/register': ['POST'],
   '/api/users': ['GET'],
   '/api/products': ['GET'],
+  'api/orders': ['POST']
 };
 
 /**
@@ -38,7 +40,6 @@ const sendOptions = (filePath, response) => {
     });
     return response.end();
   }
-
   return responseUtils.notFound(response);
 };
 
@@ -240,6 +241,11 @@ const handleRequest = async (request, response) => {
     // should respond with correct data when customer credentials are received
     controllerProducts.getAllProducts(response);
   }
+
+  if (filePath === '/api/orders' && method.toUpperCase() === 'POST') {
+    console.log("ORDERI");
+    return responseUtils.badRequest(response);
+    } 
 
 };
 
