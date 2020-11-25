@@ -19,17 +19,21 @@ window.onload = async () => {
     const cartDiv = document.getElementById('cart-container');
     const temp = document.getElementById('cart-item-template');
 
-    for (let i = 0; i < sessionStorage.length; i++) {
-        const productId = sessionStorage.key(i);
-        const count = sessionStorage.getItem(productId);
+    //work in progress
+    let productsInCart = productData.filter(product => sessionStorage.getItem(product._id));
+    console.log(productData);
+    console.log(productsInCart);
+    //for (let i = 0; i < sessionStorage.length; i++) {
+    productsInCart.map((product) => {
+        const count = sessionStorage.getItem(product._id);
         //console.log(productId + " " + count);
 
-        let product;
-        for (let productDataProduct of productData) {
-            if (productDataProduct._id === productId) {
-                product = productDataProduct;
-                }
-            }
+        // let product;
+        // for (let productDataProduct of productData) {
+        //     if (productDataProduct._id === productId) {
+        //         product = productDataProduct;
+        //         }
+        //     }
 
         let tmp = temp.content.cloneNode(true);
             
@@ -69,7 +73,7 @@ window.onload = async () => {
                 }
             decreaseProductCount(product._id);
             });    
-        }//for 
+        });//for 
 
     const orderButton = document.getElementById("place-order-button");
     orderButton.addEventListener("click", async () => {

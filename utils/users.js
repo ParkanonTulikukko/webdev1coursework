@@ -36,16 +36,18 @@ const resetUsers = () => {
  * @returns {string}
  */
 const generateId = () => {
-  let id;
+  let id = Math.random().toString(36).substr(2, 9);
 
-  do {
-    // Generate unique random id that is not already in use
-    // Shamelessly borrowed from a Gist. See:
-    // https://gist.github.com/gordonbrander/2230317
+  // do {
+  //   // Generate unique random id that is not already in use
+  //   // Shamelessly borrowed from a Gist. See:
+  //   // https://gist.github.com/gordonbrander/2230317
 
-    id = Math.random().toString(36).substr(2, 9);
-  } while (data.users.some(u => u._id === id));
-
+  //   id = Math.random().toString(36).substr(2, 9);
+  // } while (data.users.some(u => u._id === id));
+  if (id in data.users._id) {
+    id = generateId();
+  }
   return id;
 };
 
@@ -78,14 +80,19 @@ const emailInUse = email => {
 const getUser = (email, password) => {
   // TODO: 8.3 Get user whose email and password match the provided values
   //data.users.forEach(getUser);
-  let foundedUser = undefined;
-  for (let i = 0; i < data.users.length; i++) {
-    if (data.users[i].password === password && data.users[i].email === email) {
-      foundedUser = JSON.parse(JSON.stringify(data.users[i]));
-      }//if
-    }//for
+  //let foundedUser = undefined;
+  // for (let i = 0; i < data.users.length; i++) {
+  //   if (data.users[i].password === password && data.users[i].email === email) {
+  //     foundedUser = JSON.parse(JSON.stringify(data.users[i]));
+  //     }//if
+  //   }//for
 
-  return foundedUser;  
+  let fu = data.users.filter((user) => {
+    return user.password === password && user.email === email;
+  });
+  if (fu.length === 0) return undefined;
+  fu = JSON.parse(JSON.stringify(fu[0]));
+  return fu;  
   
   };
 
@@ -101,13 +108,15 @@ const getUser = (email, password) => {
  * @returns {Object|undefined}
  */
 const getUserById = userId => {
-  let foundedUser = undefined;
-  for (let i = 0; i < data.users.length; i++) {
-    if (data.users[i]._id === userId) {
-      foundedUser = JSON.parse(JSON.stringify(data.users[i]));
-      }//if
-    }//for
+  // let foundedUser = undefined;
+  // for (let i = 0; i < data.users.length; i++) {
+  //   if (data.users[i]._id === userId) {
+  //     foundedUser = JSON.parse(JSON.stringify(data.users[i]));
+  //     }//if
+  //   }//for
 
+  let foundedUser = data.users.filter(user => user._id === userId)[0];
+  foundedUser = JSON.parse(JSON.stringify(foundedUser));
   return foundedUser;  
 };
 
@@ -120,15 +129,19 @@ const getUserById = userId => {
 const deleteUserById = userId => {
   //30) should delete an existing user with the given ID
   //31) should return the deleted user object
-  for (let i = 0; i < data.users.length; i++) {
-    if (data.users[i]._id === userId) {
-      const deletedUser = JSON.parse(JSON.stringify(data.users[i]));
-      data.users.splice(i, 1);
-      //console.log(deletedUser);
-      return deletedUser;
-      }//if
-    }//for
-  return undefined;
+  // for (let i = 0; i < data.users.length; i++) {
+  //   if (data.users[i]._id === userId) {
+  //     const deletedUser = JSON.parse(JSON.stringify(data.users[i]));
+  //     data.users.splice(i, 1);
+  //     //console.log(deletedUser);
+  //     return deletedUser;
+  //     }//if
+  //   }//for
+  const dui = data.users.findIndex(u => u._id === userId);
+  if (dui === undefined) return undefined;
+  const deletedUser = JSON.parse(JSON.stringify(data.users[dui]));
+  data.users.splice(dui, 1);
+  return deletedUser;
   };
 
 /*console.log(deleteUserById("s7ygctl5v"));  

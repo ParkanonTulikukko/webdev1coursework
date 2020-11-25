@@ -41,7 +41,7 @@ window.onload = async () => {
   if (userdata) {
     const temp = document.getElementById('user-template');
     const userdiv = document.getElementById('users-container');
-    for (let user of userdata) {
+    userdata.map((user) => {
       let tmp = temp.content.cloneNode(true);
       tmp.querySelector('.item-row').setAttribute('id', 'user-' + user._id);
 
@@ -101,7 +101,7 @@ window.onload = async () => {
         document.getElementById('user-' + user._id).remove();
       });
 
-    }
+    });
   }
 
 
