@@ -21,7 +21,7 @@ const allowedMethods = {
   '/api/register': ['POST'],
   '/api/users': ['GET'],
   '/api/products': ['GET'],
-  'api/orders': ['POST']
+  '/api/orders': ['POST']
 };
 
 /**
@@ -90,45 +90,28 @@ const handleRequest = async (request, response) => {
     //const user = users.getUser(credentials[0], credentials[1]);
     const currentUser = await getCurrentUser(request);
     
-    if (currentUser === null) {
-      return responseUtils.basicAuthChallenge(response);
-    }
-    if (currentUser.role === 'customer') {
-      return responseUtils.forbidden(response);
-    }
+    // if (currentUser === null) {
+    //   return responseUtils.basicAuthChallenge(response);
+    // }
+    // if (currentUser.role === 'customer') {
+    //   return responseUtils.forbidden(response);
+    // }
 
     const fp = filePath.split('/');
     const userid = fp[fp.length - 1];
-    const user = await User.findById(userid);
+    //const user = await User.findById(userid);
 
-    if (user === null) return responseUtils.notFound(response);
-    if (method.toUpperCase() === 'GET' || method.toUpperCase() === 'PUT') {
-      if (method.toUpperCase() === 'GET') {
-        //return responseUtils.sendJson(response, user);
-        await controllerUsers.viewUser(response, userid, currentUser);
-      } else {
-        const body = await parseBodyJson(request);
-        if (body.role === 'customer' || body.role === 'admin') {
-          //update role
-          user.role = body.role;
-          await user.save();
-          return responseUtils.sendJson(response, user);
-        } else {
-          return responseUtils.badRequest(response);
-        }
-      }
+    //if (user === null) return responseUtils.notFound(response);
+
+    if (method.toUpperCase() === 'GET') {
+      return controllerUsers.viewUser(response, userid, currentUser);
+    } else if (method.toUpperCase() === 'PUT') {
+      return controllerUsers.updateUser(response, userid, currentUser, await parseBodyJson(request));
     } else if (method.toUpperCase() === 'DELETE') {
-      if (user !== null) {
-        //await User.deleteOne({ _id: userid });
-        //return responseUtils.sendJson(response, user);
-        await controllerUsers.deleteUser(response, userid, currentUser);
-      } else {
-        //return responseUtils.badRequest(response, 'User to be deleted was not found.');
-      }
+      return controllerUsers.deleteUser(response, userid, currentUser);
     } else {
       return responseUtils.badRequest(response);
     }
-    // throw new Error('Not Implemented');
   }
 
   // Default to 404 Not Found if unknown url
@@ -183,9 +166,9 @@ const handleRequest = async (request, response) => {
 
     // TODO: 8.3 Return all users as JSON
     //return responseUtils.sendJson(response, getAllUsers());
-    const allUsers = await User.find({});
+    //const allUsers = await User.find({});
     //return responseUtils.sendJson(response, allUsers);
-    controllerUsers.getAllUsers(response);
+    return controllerUsers.getAllUsers(response);
 
   }
 
@@ -239,7 +222,7 @@ const handleRequest = async (request, response) => {
     // should respond with JSON when customer credentials are received
     // should respond with correct data when admin credentials are received
     // should respond with correct data when customer credentials are received
-    controllerProducts.getAllProducts(response);
+    return controllerProducts.getAllProducts(response);
   }
 
   if (filePath === '/api/orders' && method.toUpperCase() === 'POST') {
