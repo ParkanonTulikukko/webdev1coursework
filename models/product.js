@@ -8,6 +8,11 @@ const productSchema = new Schema({
   },
   price: {
     type: Number,
+    validate: {
+      validator: (v) => {
+        return v > 0;
+      }
+    },
     required: true
   },
 	image: {

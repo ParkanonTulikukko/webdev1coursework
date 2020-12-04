@@ -59,13 +59,12 @@ const updateUser = async (response, userId, currentUser, userData) => {
   const user = await User.findById(userId);
   if (user !== null) {
     if (user._id !== currentUser._id) {
-      if (userData.role === 'customer' || userData.role === 'admin') {
+      try {
         user.role = userData.role;
         await user.save();
         return responseUtils.sendJson(response, user);
-      } else {
-        //role not allowed
-        return responseUtils.badRequest(response);
+      } catch (e) {
+        return responseUtils.badRequest(response, "invalid role");
       }
     } else {
       //can't update self
@@ -109,6 +108,18 @@ const viewUser = async (response, userId, currentUser) => {
  */
 const registerUser = async (response, userData) => {
   // TODO: 10.1 Implement this
+  try {
+    const newUser = new User(userData);
+    newUser.role = 'customer';
+    //return badrequest if new registered user's role is not customer
+    //if (newUser.role !== 'customer') {
+    //  return responseUtils.badRequest(response, 'user role not customer')
+    //}
+    await newUser.save();
+    return responseUtils.createdResource(response, newUser);
+  } catch (e) {
+    return responseUtils.badRequest(response, "invalid user information");
+  }
   throw new Error('Not Implemented');
 };
 

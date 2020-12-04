@@ -45,7 +45,8 @@ const userSchema = new Schema({
     enum: ["admin", "customer"],
     default: "customer",
     trim: true,
-    lowercase: true
+    lowercase: true,
+    required: true
   }
 });
 

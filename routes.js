@@ -1,10 +1,11 @@
 const responseUtils = require('./utils/responseUtils');
 const controllerUsers = require('./controllers/users');
-const User = require('./models/user');
-const Product = require('./models/product');
+//const User = require('./models/user');
+//const Product = require('./models/product');
 const { getCurrentUser } = require('./auth/auth');
-const products = require('./utils/products');
+//const products = require('./utils/products');
 const controllerProducts = require('./controllers/products');
+const controllerOrders = require('./controllers/orders');
 const { acceptsJson, isJson, parseBodyJson } = require('./utils/requestUtils');
 const { renderPublic } = require('./utils/render');
 //const users = require('./utils/users');
@@ -20,7 +21,7 @@ const { renderPublic } = require('./utils/render');
 const allowedMethods = {
   '/api/register': ['POST'],
   '/api/users': ['GET'],
-  '/api/products': ['GET'],
+  '/api/products': ['GET', 'POST'],
   '/api/orders': ['POST']
 };
 
@@ -66,11 +67,19 @@ const matchUserId = url => {
   return matchIdRoute(url, 'users');
 };
 
+const matchProductId = url => {
+  return matchIdRoute(url, 'products');
+};
+
+const matchOrderId = url => {
+  return matchIdRoute(url, 'orders');
+};
+
 const handleRequest = async (request, response) => {
   const { url, method, headers } = request;
   const filePath = new URL(url, `http://${headers.host}`).pathname;
 
-  console.log(filePath);
+  //console.log(filePath);
 
   // serve static files from public/ and return immediately
   if (method.toUpperCase() === 'GET' && !filePath.startsWith('/api')) {
@@ -89,6 +98,9 @@ const handleRequest = async (request, response) => {
     //const credentials = requestUtils.getCredentials(request);
     //const user = users.getUser(credentials[0], credentials[1]);
     const currentUser = await getCurrentUser(request);
+    if (currentUser === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
     
     // if (currentUser === null) {
     //   return responseUtils.basicAuthChallenge(response);
@@ -103,6 +115,10 @@ const handleRequest = async (request, response) => {
 
     //if (user === null) return responseUtils.notFound(response);
 
+    if (!acceptsJson(request)) {
+      return responseUtils.contentTypeNotAcceptable(response);
+    }
+
     if (method.toUpperCase() === 'GET') {
       return controllerUsers.viewUser(response, userid, currentUser);
     } else if (method.toUpperCase() === 'PUT') {
@@ -112,6 +128,43 @@ const handleRequest = async (request, response) => {
     } else {
       return responseUtils.badRequest(response);
     }
+  }
+
+  //Jaakko TODO: direct SINGLE product (products/{id}) GET, PUT, DELETE to product controller functions based on http method. 
+  if (matchProductId(filePath)) {
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    const currentUser = await getCurrentUser(request);
+    if (currentUser === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (!acceptsJson(request)) {
+      return responseUtils.contentTypeNotAcceptable(response);
+    }
+    const fp = filePath.split('/');
+    const productId = fp[fp.length - 1];
+    if (method.toUpperCase() === 'GET') {
+      return controllerProducts.getProduct(response, productId);
+    } else if (method.toUpperCase() === 'PUT') {
+      if (currentUser.role !== 'admin') {
+        return responseUtils.forbidden(response);
+      }
+      return controllerProducts.updateProduct(response, productId, await parseBodyJson(request));
+    } else if (method.toUpperCase() === 'DELETE') {
+      if (currentUser.role !== 'admin') {
+        return responseUtils.forbidden(response);
+      }
+      return controllerProducts.deleteProduct(response, productId);
+    } else {
+      return responseUtils.methodNotAllowed(response);
+    }
+  }
+
+  // same as above but with orders
+  if (matchOrderId(filePath)) {
+
   }
 
   // Default to 404 Not Found if unknown url
@@ -133,7 +186,7 @@ const handleRequest = async (request, response) => {
   // GET all users
   if (filePath === '/api/users' && method.toUpperCase() === 'GET') {
 
-    console.log(request.headers['authorization']);
+    //console.log(request.headers['authorization']);
     // TODO: 8.4 Add authentication (only allowed to users with role "admin")
     //should respond with Basic Auth Challenge when Authorization header is missing
     //should respond with Basic Auth Challenge when Authorization header is empty
@@ -191,15 +244,16 @@ const handleRequest = async (request, response) => {
     //   return responseUtils.badRequest(response, 'test');
     // }
     // throw new Error('Not Implemented');
-    try {
-      let newUserAdded = new User(newUser);
-      newUserAdded.role = "customer";
-      await newUserAdded.save();
-      return responseUtils.createdResource(response, newUserAdded);
-    } catch (e) {
-      //console.log(e);
-      return responseUtils.badRequest(response, 'invalid user info');
-    }
+    // try {
+    //   let newUserAdded = new User(newUser);
+    //   newUserAdded.role = "customer";
+    //   await newUserAdded.save();
+    //   return responseUtils.createdResource(response, newUserAdded);
+    // } catch (e) {
+    //   //console.log(e);
+    //   return responseUtils.badRequest(response, 'invalid user info');
+    // }
+    return controllerUsers.registerUser(response, newUser);
   }
 
   if (filePath === '/api/products' && method.toUpperCase() === 'GET') {
@@ -225,10 +279,47 @@ const handleRequest = async (request, response) => {
     return controllerProducts.getAllProducts(response);
   }
 
+  if (filePath === '/api/products' && method.toUpperCase() === 'POST') {
+    if (!isJson(request)) {
+      return responseUtils.badRequest(response, 'Invalid Content-Type. Expected application/json');
+    }
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    const user = await getCurrentUser(request);
+    if (user === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (user.role === 'admin') {
+      const newProduct = await parseBodyJson(request);
+      return controllerProducts.registerProduct(response, newProduct);
+    } else {
+      return responseUtils.forbidden(response);
+    }
+  }
+
   if (filePath === '/api/orders' && method.toUpperCase() === 'POST') {
-    console.log("ORDERI");
+    //console.log("ORDERI");
     return responseUtils.badRequest(response);
-    } 
+  }
+  
+  if (filePath === '/api/orders' && method.toUpperCase() === 'GET') {
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    const currentUser = await getCurrentUser(request);
+    if (currentUser === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (!acceptsJson(request)) {
+      return responseUtils.contentTypeNotAcceptable(response);
+    }
+    if (currentUser.role === 'admin') {
+      return controllerOrders.getAllOrders(response);
+    }
+  }
 
 };
 

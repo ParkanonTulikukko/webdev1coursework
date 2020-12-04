@@ -30,7 +30,7 @@ const getCurrentUser = async request => {
   if (credentials === null) {
     return null;
   }
-  console.log(credentials[0] + " " + credentials[1]);
+  //console.log(credentials[0] + " " + credentials[1]);
   //return users.getUser(credentials[0], credentials[1]);
   const user = await User.findOne({ email: credentials[0] }).exec();
   if (user !== null) {

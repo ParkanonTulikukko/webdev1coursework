@@ -8,7 +8,7 @@ const responseUtils = require('../utils/responseUtils');
  * @param {http.ServerResponse} response
  */
 const getAllOrders = async response => {
-  responseUtils.sendJson(response, await Order.find({}));
+  return responseUtils.sendJson(response, await Order.find({}));
   };
 
 
