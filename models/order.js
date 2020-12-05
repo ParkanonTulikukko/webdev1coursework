@@ -17,11 +17,7 @@ const orderedItemSchema = new Schema({
     },
     price: {
       type: Number,
-      validate: {
-        validator: (v) => {
-          return v > 0;
-        }
-      },
+      validate: v => v > 0,
       required: true
     },
     description: {type: String}
@@ -37,11 +33,11 @@ const orderSchema = new Schema({
   customerId: {
     type: Schema.Types.ObjectId,
     ref: User,
-    required: true,
+    required: true
   },
   items: {
     type: [orderedItemSchema],
-    required: true
+    validate: v => Array.isArray(v) && v.length > 0
   }
 });
 

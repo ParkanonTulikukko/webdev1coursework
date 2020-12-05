@@ -24,7 +24,7 @@ const noContent = response => {
   return response.end();
 };
 
-const badRequest = (response, errorMsg) => {
+const badRequest = (response, errorMsg = 'ERROR') => {
   if (errorMsg) return sendJson(response, { error: errorMsg }, 400);
 
   response.statusCode = 400;

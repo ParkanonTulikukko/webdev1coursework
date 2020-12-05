@@ -67,10 +67,22 @@ const matchUserId = url => {
   return matchIdRoute(url, 'users');
 };
 
+/**
+ * Does the URL match /api/products/{id}
+ *
+ * @param {string} url filePath
+ * @returns {boolean}
+ */
 const matchProductId = url => {
   return matchIdRoute(url, 'products');
 };
 
+/**
+ * Does the URL match /api/orders/{id}
+ *
+ * @param {string} url filePath
+ * @returns {boolean}
+ */
 const matchOrderId = url => {
   return matchIdRoute(url, 'orders');
 };
@@ -130,7 +142,7 @@ const handleRequest = async (request, response) => {
     }
   }
 
-  //Jaakko TODO: direct SINGLE product (products/{id}) GET, PUT, DELETE to product controller functions based on http method. 
+  // Direct SINGLE product (products/{id}) GET, PUT, DELETE to product controller functions based on http method. 
   if (matchProductId(filePath)) {
     const authorization = request.headers['authorization'];
     if (authorization === undefined || authorization === "") {
@@ -329,10 +341,11 @@ const handleRequest = async (request, response) => {
       return responseUtils.contentTypeNotAcceptable(response);
     }
     if (!isJson(request)) {
-      return responseUtils.badRequest(response);
+      return responseUtils.badRequest(response, 'Invalid Content-Type. Expected application/json');
     }
     if (currentUser.role === 'customer') {
-      return controllerOrders.registerOrder(response, await parseBodyJson(request), currentUser);
+      const body = await parseBodyJson(request);
+      return controllerOrders.registerOrder(response, body, currentUser);
     } else {
       return responseUtils.forbidden(response);
     }
