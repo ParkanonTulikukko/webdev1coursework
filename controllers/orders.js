@@ -1,3 +1,4 @@
+const { Mongoose } = require('mongoose');
 const Order = require('../models/order');
 const responseUtils = require('../utils/responseUtils');
 
@@ -5,7 +6,7 @@ const responseUtils = require('../utils/responseUtils');
 /**
  * Send all products as JSON
  *
- * @param {http.ServerResponse} response
+ * @param {http.ServerResponse} response - reference to the http response to attach all orders to
  */
 const getAllOrders = async response => {
   return responseUtils.sendJson(response, await Order.find({}));
@@ -24,6 +25,11 @@ const getAllOrders = async response => {
 
 
 
+/**
+ * 
+ * @param {http.ServerResponse} response res to modify 
+ * @param {object} user user object 
+ */
 const getOwnOrders = async (response, user) => {
   const orders = await Order.find({customerId: user._id});
   if (orders !== null) {
@@ -33,6 +39,12 @@ const getOwnOrders = async (response, user) => {
   }
 };
 
+/**
+ * 
+ * @param {http.ServerResponse} response res to modify
+ * @param {string} orderId orderid as a string 
+ * @param {object} user requesters user object
+ */
 const getOrder = async (response, orderId, user) => {
   const order = await Order.findById(orderId);
   if (order !== null) {
@@ -44,6 +56,12 @@ const getOrder = async (response, orderId, user) => {
   return responseUtils.notFound(response);
 };
 
+/**
+ * 
+ * @param {http.ServerResponse} response res to modify
+ * @param {object} itemsData object with itemdata
+ * @param {object} user req's user object
+ */
 const registerOrder = async (response, itemsData, user) => {
   // if (itemsData.items.length === 0 || itemsData === undefined) {
   //   return responseUtils.badRequest(response);

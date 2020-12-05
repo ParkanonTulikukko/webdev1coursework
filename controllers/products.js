@@ -5,7 +5,7 @@ const responseUtils = require('../utils/responseUtils');
 /**
  * Send all products as JSON
  *
- * @param {http.ServerResponse} response
+ * @param {http.ServerResponse} response res to modify
  */
 const getAllProducts = async response => {
   responseUtils.sendJson(response, await Product.find({}));

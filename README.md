@@ -1,7 +1,7 @@
 # Group 
 
-Member1:  name, email, student ID, 
-resposible for: TODO, short description of duties 
+Member1:  Jaakko Kankaansivu, jaakko.kankaansivu@tuni.fi, 425014, 
+resposible for: coding and docs 
 
 Member2:  Heikki Kuivala, heikki.kuivala@gmail.com, K88424, 
 resposible for: coding and documenting 

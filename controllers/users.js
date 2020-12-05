@@ -4,7 +4,7 @@ const responseUtils = require('../utils/responseUtils');
 /**
  * Send all users as JSON
  *
- * @param {http.ServerResponse} response
+ * @param {http.ServerResponse} response - reponse to modify
  */
 const getAllUsers = async response => {
   //response.writeHead(200, { 'Content-Type': 'application/json' });
@@ -17,9 +17,9 @@ const getAllUsers = async response => {
 /**
  * Delete user and send deleted user as JSON
  *
- * @param {http.ServerResponse} response
- * @param {string} userId
- * @param {Object} currentUser (mongoose document object)
+ * @param {http.ServerResponse} response - res to modify
+ * @param {string} userId - userId of the user to be deleted
+ * @param {object} currentUser (mongoose document object)
  */
 const deleteUser = async (response, userId, currentUser) => {
   if (currentUser === null) {
@@ -43,10 +43,10 @@ const deleteUser = async (response, userId, currentUser) => {
 /**
  * Update user and send updated user as JSON
  *
- * @param {http.ServerResponse} response
- * @param {string} userId
- * @param {Object} currentUser (mongoose document object)
- * @param {Object} userData JSON data from request body
+ * @param {http.ServerResponse} response - res to modify
+ * @param {string} userId - userid of the user to update
+ * @param {object} currentUser (mongoose document object)
+ * @param {object} userData JSON data from request body
  */
 const updateUser = async (response, userId, currentUser, userData) => {
   // TODO: 10.1 Implement this
@@ -79,9 +79,9 @@ const updateUser = async (response, userId, currentUser, userData) => {
 /**
  * Send user data as JSON
  *
- * @param {http.ServerResponse} response
- * @param {string} userId
- * @param {Object} currentUser (mongoose document object)
+ * @param {http.ServerResponse} response -res to modify
+ * @param {string} userId - userid of the user to be sent back
+ * @param {object} currentUser (mongoose document object)
  */
 const viewUser = async (response, userId, currentUser) => {
   // TODO: 10.1 Implement this
@@ -103,8 +103,8 @@ const viewUser = async (response, userId, currentUser) => {
 /**
  * Register new user and send created user back as JSON
  *
- * @param {http.ServerResponse} response
- * @param {Object} userData JSON data from request body
+ * @param {http.ServerResponse} response - res to modify
+ * @param {object} userData JSON data from request body
  */
 const registerUser = async (response, userData) => {
   // TODO: 10.1 Implement this

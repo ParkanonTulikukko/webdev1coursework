@@ -38,7 +38,7 @@ const getJSON = async url => {
  *
  * @param {string} url resource url on the server
  * @param {string} method "PUT" or "POST" 
- * @param {Object|Array} data payload data be sent to the server as JSON
+ * @param {object|Array} data payload data be sent to the server as JSON
  * @returns {Promise<*>} promise that resolves to the parsed JSON
  */
 const postOrPutJSON = async (url, method, data = {}) => {
@@ -105,7 +105,7 @@ const deleteResourse = async url => {
  * or other HTML elements (remember that IDs must be unique within
  * a document).
  *
- * @returns {string}
+ * @returns {string} random id as string
  */
 const generateId = () => {
   // Shamelessly borrowed from a Gist. See:
@@ -119,7 +119,7 @@ const generateId = () => {
  * Appends a new paragraph inside the container element and gives it
  * class based on the status of the message (success or failure).
  *
- * @param {string} message
+ * @param {string} message text of the message
  * @param {string} containerId id attribute of the container element
  * @param {boolean} isSuccess whether the message describes a success or a failure
  */

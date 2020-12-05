@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+/**
+ * setter function for model User that hashes the plain text password
+ * @param {string} password plain text password
+ */
 function hash(password) {
   if (password.length < 10) {
      return password;
@@ -53,7 +57,7 @@ const userSchema = new Schema({
 /**
  * Compare supplied password with user's own (hashed) password
  *
- * @param {string} password
+ * @param {string} password - password to use for checking
  * @returns {Promise<boolean>} promise that resolves to the comparison result
  */
 userSchema.methods.checkPassword = async function (password) {

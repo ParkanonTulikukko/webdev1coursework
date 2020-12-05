@@ -20,6 +20,9 @@ const getDbUrl = () => {
   }
 };
 
+/**
+ * attempts to connect to DB
+ */
 function connectDB () {
   // Do nothing if already connected
   if (!mongoose.connection || mongoose.connection.readyState === 0) {
