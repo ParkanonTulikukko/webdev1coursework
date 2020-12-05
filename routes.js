@@ -22,7 +22,7 @@ const allowedMethods = {
   '/api/register': ['POST'],
   '/api/users': ['GET'],
   '/api/products': ['GET', 'POST'],
-  '/api/orders': ['POST']
+  '/api/orders': ['GET', 'POST']
 };
 
 /**
@@ -164,7 +164,24 @@ const handleRequest = async (request, response) => {
 
   // same as above but with orders
   if (matchOrderId(filePath)) {
-
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    const currentUser = await getCurrentUser(request);
+    if (currentUser === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (!acceptsJson(request)) {
+      return responseUtils.contentTypeNotAcceptable(response);
+    }
+    const fp = filePath.split('/');
+    const orderId = fp[fp.length - 1];
+    if (method.toUpperCase() === 'GET') {
+      return controllerOrders.getOrder(response, orderId, currentUser);
+    } else {
+      return responseUtils.methodNotAllowed(response);
+    }
   }
 
   // Default to 404 Not Found if unknown url
@@ -300,8 +317,25 @@ const handleRequest = async (request, response) => {
   }
 
   if (filePath === '/api/orders' && method.toUpperCase() === 'POST') {
-    //console.log("ORDERI");
-    return responseUtils.badRequest(response);
+    const authorization = request.headers['authorization'];
+    if (authorization === undefined || authorization === "") {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    const currentUser = await getCurrentUser(request);
+    if (currentUser === null) {
+      return responseUtils.basicAuthChallenge(response);
+    }
+    if (!acceptsJson(request)) {
+      return responseUtils.contentTypeNotAcceptable(response);
+    }
+    if (!isJson(request)) {
+      return responseUtils.badRequest(response);
+    }
+    if (currentUser.role === 'customer') {
+      return controllerOrders.registerOrder(response, await parseBodyJson(request), currentUser);
+    } else {
+      return responseUtils.forbidden(response);
+    }
   }
   
   if (filePath === '/api/orders' && method.toUpperCase() === 'GET') {
@@ -318,6 +352,8 @@ const handleRequest = async (request, response) => {
     }
     if (currentUser.role === 'admin') {
       return controllerOrders.getAllOrders(response);
+    } else if (currentUser.role === 'customer') {
+      return controllerOrders.getOwnOrders(response, currentUser);
     }
   }
 
