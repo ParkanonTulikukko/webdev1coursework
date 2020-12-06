@@ -58,7 +58,7 @@ const updateUser = async (response, userId, currentUser, userData) => {
   }
   const user = await User.findById(userId);
   if (user !== null) {
-    if (user._id !== currentUser._id) {
+    if (!user._id.equals(currentUser._id)) {
       try {
         user.role = userData.role;
         await user.save();
