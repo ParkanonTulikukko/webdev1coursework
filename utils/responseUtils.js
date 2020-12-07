@@ -18,8 +18,8 @@ basicAuthChallenge(response);
  * Helper function to send JSON type data
  * 
  * @param {http.ServerResponse} response res to modify 
- * @param {array} payload Payload to convert to JSON and to send to the requester 
- * @param {String} code HTTP response status code
+ * @param {Array} payload Payload to convert to JSON and to send to the requester 
+ * @param {string} code HTTP response status code
  */
 const sendJson = (response, payload, code = 200) => {
   response.writeHead(code, { 'Content-Type': 'application/json' });
@@ -30,7 +30,7 @@ const sendJson = (response, payload, code = 200) => {
  * Calls out sendJson function with status code 201
  * 
  * @param {http.ServerResponse} response res to modify  
- * @param {array} payload Payload to send to sendJson function 
+ * @param {Array} payload Payload to send to sendJson function 
  */
 const createdResource = (response, payload) => {
   return sendJson(response, payload, 201);
@@ -50,7 +50,7 @@ const noContent = response => {
  * Function to be called when the request is invalid
  * 
  * @param {http.ServerResponse} response res to modify
- * @param {String} errorMsg Error message
+ * @param {string} errorMsg Error message
  */
 const badRequest = (response, errorMsg = 'ERROR') => {
   if (errorMsg) return sendJson(response, { error: errorMsg }, 400);
@@ -123,7 +123,7 @@ const internalServerError = response => {
  * Send response with the 500 status code and redirect to the given URL
  * 
  * @param {http.ServerResponse} response res to modify
- * @param {String} URL to be redirect
+ * @param {string} page to be redirect
  */
 const redirectToPage = (response, page) => {
   response.writeHead(302, { Location: page });
