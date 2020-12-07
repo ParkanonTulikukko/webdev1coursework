@@ -11,6 +11,12 @@ const getAllProducts = async response => {
   responseUtils.sendJson(response, await Product.find({}));
   };
 
+/**
+ * Gets a product as JSON
+ * 
+ * @param {http.ServerResponse} response res to modify 
+ * @param {String} productId Product's id  
+ */  
 const getProduct = async (response, productId) => {
   const product = await Product.findById(productId);
   if (product !== null) {
@@ -20,6 +26,12 @@ const getProduct = async (response, productId) => {
   }
 }
 
+/**
+ * Deletes a product
+ * 
+ * @param {http.ServerResponse} response res to modify  
+ * @param {String} productId Product's id 
+ */
 const deleteProduct = async (response, productId) => {
   const product = await Product.findById(productId);
   if (product !== null) {

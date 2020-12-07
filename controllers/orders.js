@@ -13,18 +13,6 @@ const getAllOrders = async response => {
 };
 
 
-// const deleteOrder = async (response, orderId) => {
-//   const order = await Order.findById(orderId);
-//   if (order !== null) {
-//     await Order.deleteOne({ _id: orderId });
-//     responseUtils.sendJson(response, order);
-//   } else {
-//     return responseUtils.notFound(response);
-//   }
-// };
-
-
-
 /**
  * 
  * @param {http.ServerResponse} response res to modify 

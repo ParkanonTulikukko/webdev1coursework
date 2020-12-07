@@ -48,12 +48,6 @@ const getCredentials = request => {
     }  
 
 };
-/*
-let req = getRequest(getHeaders);
-req.headers['authorization'] = `Basic YWRtaW5AZW1haWwuY29tOjEyMzQ1Njc4OTA=`;
-console.log(req.headers);
-console.log(getCredentials(req));
-*/
 
 /**
  * Does the client accept JSON responses?
